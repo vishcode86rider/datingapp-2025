@@ -3,7 +3,7 @@ id: string;
 displayName: string;
 email: string;
 token: string;
-imaheUrl?: string;
+imageUrl?: string;
 }
 
 export type LoginCreds = {
