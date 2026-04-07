@@ -1,5 +1,4 @@
-@if(paginatedResult(); as paginatedResult)
-{
+@if(paginatedResult(); as paginatedResult){
 <div class="flex flex-col w-full">
     <div class="flex justify-between items-center">
         <div class="tabs tabs-box tabs-lg text-primary w-fit">
@@ -12,8 +11,7 @@
             }
         </div>
 
-        @if (paginatedResult.metadata; as metadata)
-        {
+        @if (paginatedResult.metadata; as metadata){
             <app-paginator
             [hidden]="metadata.totalCount==0"
             [pageNumber]="metadata.currentPage"

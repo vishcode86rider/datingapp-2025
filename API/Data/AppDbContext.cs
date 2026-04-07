@@ -13,11 +13,22 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
 
     public DbSet<Photo> Photos { get; set; }
     public DbSet<MemberLike> Likes { get; set; }
+    public DbSet<Message> Messages { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.Recipient)
+            .WithMany(s => s.MessageReceived)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(m => m.Sender)
+            .WithMany(s => s.MessageSent)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<MemberLike>()
             .HasKey(ml => new { ml.SourceMemberId, ml.TargetMemberId });
@@ -39,6 +50,11 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
             v => DateTime.SpecifyKind(v, DateTimeKind.Utc) // Convert back to UTC when reading from the database
         );
 
+        var nullableDateTimeConverter = new ValueConverter<DateTime?, DateTime?>(
+            v => v.HasValue ? v.Value.ToUniversalTime(): null, // Convert to UTC when saving to the database
+            v => v.HasValue ? DateTime.SpecifyKind(v.Value, DateTimeKind.Utc) : null // Convert back to UTC when reading from the database
+        );
+
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
 
@@ -47,6 +63,10 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
                 if (property.ClrType == typeof(DateTime))
                 {
                     property.SetValueConverter(dateTimeConverter);
+                }
+                else if (property.ClrType == typeof(DateTime?))
+                {
+                    property.SetValueConverter(nullableDateTimeConverter);
                 }
             }
         }
