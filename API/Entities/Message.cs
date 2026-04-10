@@ -4,10 +4,12 @@ namespace API.Entities;
 
 public class Message
 {
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    //public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string Id { get; set; } = null!;
     public required string Content { get; set; }
     public DateTime? DataRead { get; set; } //it is DateRead property, just typo. 
-    public DateTime MessageSent { get; set; } = DateTime.UtcNow;
+    //public DateTime MessageSent { get; set; } = DateTime.UtcNow;
+    public DateTime MessageSent { get; set; }
     public bool SenderDeleted { get; set; }
     public bool RecipientDeleted { get; set; }
 
